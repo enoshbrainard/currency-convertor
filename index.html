@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Currency Converter</title>
+<style>
+    select:hover {
+        cursor: pointer;
+    }
+</style>
+
+</head>
+
+<body>
+    <h1 class="heading text-center display-4">Currency Converter</h1>
+    <hr>
+    <div class="container">
+        <div class="main">
+            <div class="form-group">
+                <label for="oamount">Amount to Convert:</label>
+                <input type="text" class="form-control searchBox" placeholder="0.00" id="oamount" readonly>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">From</span>
+                        </div>
+                        <select class="form-control from" id="sel1">
+                            <option value="">Select One …</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                            <option value="CAD">CAD</option>
+                            <option value="AUD">AUD</option>
+                            <option value="INR">INR</option>
+                            <option value="CNY">CNY</option>
+                            <!-- Add more currencies here -->
+                            <option value="AED">AED</option>
+                            <option value="BRL">BRL</option>
+                            <option value="MXN">MXN</option>
+                            <option value="SGD">SGD</option>
+                            <option value="ZAR">ZAR</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">To</span>
+                        </div>
+                        <select class="form-control to" id="sel2">
+                            <option value="">Select One …</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                            <option value="CAD">CAD</option>
+                            <option value="AUD">AUD</option>
+                            <option value="INR">INR</option>
+                            <option value="CNY">CNY</option>
+                            <!-- Add more currencies here -->
+                            <option value="AED">AED</option>
+                            <option value="BRL">BRL</option>
+                            <option value="MXN">MXN</option>
+                            <option value="SGD">SGD</option>
+                            <option value="ZAR">ZAR</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="keyboard">
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('1')">1</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('2')">2</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('3')">3</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('4')">4</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('5')">5</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('6')">6</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('7')">7</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('8')">8</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('9')">9</button>
+                        <button class="btn btn-light btn-lg" onclick="appendNumber('0')">0</button>
+                        <button class="btn btn-light btn-lg" onclick="clearInput()">C</button>
+                        <button class="btn btn-light btn-lg" onclick="removeLastDigit()">&#9003;</button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary convert m-2" type="submit" onclick="getResults()"
+                    style="color:blue;">Convert</button>
+            </div>
+        </div>
+        <div id="finalAmount" class="text-center">
+            <h2>Converted Amount: <span class="finalValue" style="color:rgb(153,51,255);"></span></h2>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        const api = "https://api.exchangerate-api.com/v4/latest/USD";
+        
+        let resultFrom;
+        let resultTo;
+        let searchValue;
+
+       
+        function getResults() {
+           
+            resultFrom = document.getElementById("sel1").value;
+            resultTo = document.getElementById("sel2").value;
+
+          
+            searchValue = document.getElementById("oamount").value;
+
+           
+            if (searchValue.trim() === "" || isNaN(searchValue)) {
+                return;
+            }
+
+            if (!resultFrom || !resultTo) {
+                return;
+            }
+
+            fetch(`${api}`)
+                .then(currency => {
+                    return currency.json();
+                }).then(displayResults);
+        }
+
+        
+        function displayResults(currency) {
+            let fromRate = currency.rates[resultFrom];
+            let toRate = currency.rates[resultTo];
+
+            document.querySelector(".finalValue").innerHTML = ((toRate / fromRate) * searchValue).toFixed(2);
+            document.getElementById("finalAmount").style.display = "block";
+        }
+
+       function appendNumber(number) {
+            document.getElementById('oamount').value += number;
+        }
+
+        function clearInput() {
+            document.getElementById('oamount').value = '';
+        }
+
+        function removeLastDigit() {
+            let currentInput = document.getElementById('oamount').value;
+            document.getElementById('oamount').value = currentInput.slice(0, -1);
+        }
+    </script>
+</body>
+
+</html>
